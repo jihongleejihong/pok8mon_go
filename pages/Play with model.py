@@ -9,6 +9,7 @@ import joblib
 import glob
 from PIL import Image
 import multiprocessing
+import requests
 
 
 
@@ -103,17 +104,24 @@ if task_idx == 0:
 
 
 else:    
-    method = st.selectbox('이미지 입력 방식을 골라주세요', ['파일 업로드', 'PC 카메라로 찍기'])
+    method = st.selectbox('이미지 입력 방식을 골라주세요', ['파일 업로드', '이미지 링크로 불러오기', 'PC 카메라로 찍기'])
+    user_img = None
     if method == '파일 업로드':
         user_img = st.file_uploader('이미지를 업로드하세요', type = ['png', 'jpg', 'jpeg'])
+    elif method == '이미지 링크로 불러오기':
+        url = ''
+        url = st.text_input('이미지 주소')
+        if url:
+            user_img = requests.get(url, stream=True).raw
     else:    
         user_img = st.camera_input("사진을 찍어주세요")
 
     if user_img:
         test_img = np.asarray(Image.open(user_img).convert('RGB').resize((300, 300)))
-        if method == '파일 업로드':
+        if not method == 'PC 카메라로 찍기':
             st.image(test_img)
-  
+    
+
 
 if test_img is not None:
     start = st.button('예측하기')
@@ -126,15 +134,20 @@ if test_img is not None:
     if start:
         my_bar = st.progress(0)
 
-
-        y_pred = model_predict(clf_model, img_to_4D(test_img/255.0))
-        y_predict = np.argsort(-y_pred)[:,:3][0]
+        col1, col2 = st.columns(2)
+        with col1:
+            prediction_state = st.text('포켓몬 이름 분류중')
+            y_pred = model_predict(clf_model, img_to_4D(test_img/255.0))
+            y_predict = np.argsort(-y_pred)[:,:3][0]
+            prediction_state.success('포켓몬 이름 분류 완료')
         my_bar.progress(33)
-        pred_type1 = model_predict(type1_model, np.uint8(img_to_4D(test_img)))
-        my_bar.progress(66)
-        pred_type2 = model_predict(type2_model, np.uint8(img_to_4D(test_img)))        
-        my_bar.progress(100)
-        
+        with col2:
+            prediction_state = st.text('포켓몬 타입 분류 중')
+            pred_type1 = model_predict(type1_model, np.uint8(img_to_4D(test_img)))
+            my_bar.progress(66)
+            pred_type2 = model_predict(type2_model, np.uint8(img_to_4D(test_img)))        
+            my_bar.progress(100)
+            prediction_state.success('포켓몬 타입 분류 완료')
         st.subheader(clf_title_options[task_idx])
         
 
@@ -167,7 +180,7 @@ if test_img is not None:
             type1 = upper_type(ohe.categories_[0][t1])
             type2 = upper_type(ohe.categories_[0][t2])
             with cols[1]:            
-                st.image(f'resources/img/type/{type1}.png')
+                imga = st.image(f'resources/img/type/{type1}.png')
                 st.subheader(type_dict[type1])
                 st.write('확률: ',format(pred_type1[0][t1]*100, '.2f'),"%")
             with cols[2]:                       
