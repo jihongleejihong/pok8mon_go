@@ -4,38 +4,41 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import cv2
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import json
 import joblib
 import glob
 from PIL import Image
+import multiprocessing
+
+
 
 st.set_page_config(layout="centered")
 
 model_path = 'resources/fitted_models/'
 clf_label = pd.read_csv("resources/clf_label.csv")["0"].to_list()
-target_stat = pd.read_csv("resources/target_stats.csv")
 
 
 @st.experimental_singleton
 def load_models(model_path):
-    clf_model = tf.keras.models.load_model(f'{model_path}model_classification.h5')
-    type1_model = tf.keras.models.load_model(f'{model_path}resnet50_type1.h5')
-    type2_model = tf.keras.models.load_model(f'{model_path}resnet50_type2.h5')
+    clf_model = tf.lite.Interpreter(f'{model_path}model_classification.tflite', num_threads = multiprocessing.cpu_count())
+    clf_model.allocate_tensors()
+    type1_model = tf.lite.Interpreter(f'{model_path}resnet50_type1.tflite', num_threads = multiprocessing.cpu_count())
+    type1_model.allocate_tensors()
+    type2_model = tf.lite.Interpreter(f'{model_path}resnet50_type2.tflite', num_threads = multiprocessing.cpu_count())
+    type2_model.allocate_tensors()
     ohe = joblib.load("resources/fitted_models/ohe.joblib")
     return clf_model, type1_model, type2_model, ohe
 
 
-@st.cache
 def img_to_4D(img):
     image_resized = cv2.resize(img, (150,150))
-    image_array = img_to_array(image_resized)
-    image_array = image_array/255.0
+    image_array = tf.keras.preprocessing.image.img_to_array(image_resized)
+    image_array = image_array
     # image_array.shape
     image_array_4D = np.expand_dims(image_array, axis=0)
     return image_array_4D
 
-@st.cache
+
 def read_and_resize_img(path, size = None, show = False):
     img = cv2.cvtColor(cv2.imread(path),
                        cv2.COLOR_BGR2RGB)
@@ -45,16 +48,28 @@ def read_and_resize_img(path, size = None, show = False):
         plt.imshow(img)
     return img
 
+def model_predict(interpreter, test_img):
+    interpreter.set_tensor(interpreter.get_input_details()[0]["index"], test_img)
+    interpreter.invoke()
+    output_data = interpreter.get_tensor(interpreter.get_output_details()[0]['index'])
+    return output_data
+
+
 def upper_type(type_label):
     return type_label[0].upper() + type_label[1:]
 
 clf_model, type1_model, type2_model, ohe = load_models(model_path)
 
-with open('resources/poke_dict.json', 'r') as fp:
-   poke_dict = json.load(fp)
+@st.cache
+def load_dict():
+    with open('resources/poke_dict.json', 'r') as fp:
+        poke_dict = json.load(fp)
 
-with open('resources/kor_type.json', 'r') as fp:
-   type_dict = json.load(fp)
+    with open('resources/kor_type.json', 'r') as fp:
+        type_dict = json.load(fp)
+    return poke_dict, type_dict
+
+poke_dict, type_dict = load_dict()
 
 
 
@@ -88,7 +103,7 @@ if task_idx == 0:
 
 
 else:    
-    method = st.selectbox('Pick one', ['파일 업로드', 'PC 카메라로 찍기'])
+    method = st.selectbox('이미지 입력 방식을 골라주세요', ['파일 업로드', 'PC 카메라로 찍기'])
     if method == '파일 업로드':
         user_img = st.file_uploader('이미지를 업로드하세요', type = ['png', 'jpg', 'jpeg'])
     else:    
@@ -112,12 +127,12 @@ if test_img is not None:
         my_bar = st.progress(0)
 
 
-        y_pred = clf_model.predict(img_to_4D(test_img))
+        y_pred = model_predict(clf_model, img_to_4D(test_img/255.0))
         y_predict = np.argsort(-y_pred)[:,:3][0]
-        my_bar.progress(100)
-        pred_type1 = type1_model.predict(img_to_4D(test_img) * 255)
-        pred_type2 = type2_model.predict(img_to_4D(test_img) * 255)
-        
+        my_bar.progress(33)
+        pred_type1 = model_predict(type1_model, np.uint8(img_to_4D(test_img)))
+        my_bar.progress(66)
+        pred_type2 = model_predict(type2_model, np.uint8(img_to_4D(test_img)))        
         my_bar.progress(100)
         
         st.subheader(clf_title_options[task_idx])
