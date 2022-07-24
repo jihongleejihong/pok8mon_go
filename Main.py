@@ -246,7 +246,7 @@ def main():
                 # st.write(f"타입 2: {type_dict[actual_type2]}")
 
         else:    
-            method = st.selectbox('이미지 입력 방식을 골라주세요', ['파일 업로드', '이미지 링크로 불러오기', 'PC 카메라로 찍기'])
+            method = st.selectbox('이미지 입력 방식을 골라주세요', ['파일 업로드', '이미지 링크로 불러오기', '카메라로 찍기'])
             user_img = None
             if method == '파일 업로드':
                 user_img = st.file_uploader('이미지를 업로드하세요', type = ['png', 'jpg', 'jpeg'])
