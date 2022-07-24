@@ -11,8 +11,58 @@ from PIL import Image
 import multiprocessing
 import requests
 
-st.set_page_config(layout="centered", page_title="Pokémon Prediction by Images", page_icon = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQia9FUVgdDp2rNa6SGUobh7ywxR9UqEyuJpAMjUulfyxt-ls7aEhh6uLSvNJ-_bFCZs5w&usqp=CAU',
-    )
+
+@st.experimental_singleton
+def load_models(model_path):
+    clf_model = tf.lite.Interpreter(f'{model_path}model_classification.tflite', num_threads = multiprocessing.cpu_count())
+    clf_model.allocate_tensors()
+    type1_model = tf.lite.Interpreter(f'{model_path}resnet50_type1.tflite', num_threads = multiprocessing.cpu_count())
+    type1_model.allocate_tensors()
+    type2_model = tf.lite.Interpreter(f'{model_path}resnet50_type2.tflite', num_threads = multiprocessing.cpu_count())
+    type2_model.allocate_tensors()
+    ohe = joblib.load("resources/fitted_models/ohe.joblib")
+    return clf_model, type1_model, type2_model, ohe
+
+
+def img_to_4D(img):
+    image_resized = cv2.resize(img, (150,150))
+    image_array = tf.keras.preprocessing.image.img_to_array(image_resized)
+    image_array = image_array
+    # image_array.shape
+    image_array_4D = np.expand_dims(image_array, axis=0)
+    return image_array_4D
+
+
+def read_and_resize_img(path, size = None, show = False):
+    img = cv2.cvtColor(cv2.imread(path),
+                    cv2.COLOR_BGR2RGB)
+    if size:
+        img = cv2.resize(img, size)
+    if show:
+        plt.imshow(img)
+    return img
+
+
+def model_predict(interpreter, test_img):
+    interpreter.set_tensor(interpreter.get_input_details()[0]["index"], test_img)
+    interpreter.invoke()
+    output_data = interpreter.get_tensor(interpreter.get_output_details()[0]['index'])
+    return output_data
+
+
+def upper_type(type_label):
+    return type_label[0].upper() + type_label[1:]
+
+
+@st.cache
+def load_dict():
+    with open('resources/poke_dict.json', 'r') as fp:
+        poke_dict = json.load(fp)
+
+    with open('resources/kor_type.json', 'r') as fp:
+        type_dict = json.load(fp)
+    return poke_dict, type_dict
+
 
 def main():
     with tab1:
@@ -161,57 +211,7 @@ def main():
         model_path = 'resources/fitted_models/'
         clf_label = pd.read_csv("resources/clf_label.csv")["0"].to_list()
 
-
-        @st.experimental_singleton
-        def load_models(model_path):
-            clf_model = tf.lite.Interpreter(f'{model_path}model_classification.tflite', num_threads = multiprocessing.cpu_count())
-            clf_model.allocate_tensors()
-            type1_model = tf.lite.Interpreter(f'{model_path}resnet50_type1.tflite', num_threads = multiprocessing.cpu_count())
-            type1_model.allocate_tensors()
-            type2_model = tf.lite.Interpreter(f'{model_path}resnet50_type2.tflite', num_threads = multiprocessing.cpu_count())
-            type2_model.allocate_tensors()
-            ohe = joblib.load("resources/fitted_models/ohe.joblib")
-            return clf_model, type1_model, type2_model, ohe
-
-
-        def img_to_4D(img):
-            image_resized = cv2.resize(img, (150,150))
-            image_array = tf.keras.preprocessing.image.img_to_array(image_resized)
-            image_array = image_array
-            # image_array.shape
-            image_array_4D = np.expand_dims(image_array, axis=0)
-            return image_array_4D
-
-
-        def read_and_resize_img(path, size = None, show = False):
-            img = cv2.cvtColor(cv2.imread(path),
-                            cv2.COLOR_BGR2RGB)
-            if size:
-                img = cv2.resize(img, size)
-            if show:
-                plt.imshow(img)
-            return img
-
-        def model_predict(interpreter, test_img):
-            interpreter.set_tensor(interpreter.get_input_details()[0]["index"], test_img)
-            interpreter.invoke()
-            output_data = interpreter.get_tensor(interpreter.get_output_details()[0]['index'])
-            return output_data
-
-
-        def upper_type(type_label):
-            return type_label[0].upper() + type_label[1:]
-
         clf_model, type1_model, type2_model, ohe = load_models(model_path)
-
-        @st.cache
-        def load_dict():
-            with open('resources/poke_dict.json', 'r') as fp:
-                poke_dict = json.load(fp)
-
-            with open('resources/kor_type.json', 'r') as fp:
-                type_dict = json.load(fp)
-            return poke_dict, type_dict
 
         poke_dict, type_dict = load_dict()
 
@@ -244,7 +244,6 @@ def main():
                 # st.write(f"타입 1: {type_dict[actual_type1]}")
                 # st.image(f'resources/img/type/{actual_type2}.png')
                 # st.write(f"타입 2: {type_dict[actual_type2]}")
-
 
         else:    
             method = st.selectbox('이미지 입력 방식을 골라주세요', ['파일 업로드', '이미지 링크로 불러오기', 'PC 카메라로 찍기'])
@@ -331,9 +330,11 @@ def main():
                         st.subheader(type_dict[type2])
                         st.write('확률: ',format(pred_type2[0][t2]*100, '.2f'),"%")
 
+
+
+st.set_page_config(layout="centered", page_title="Pokémon Prediction by Images", page_icon = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQia9FUVgdDp2rNa6SGUobh7ywxR9UqEyuJpAMjUulfyxt-ls7aEhh6uLSvNJ-_bFCZs5w&usqp=CAU',
+    )
+
 tab1, tab2, tab3 = st.tabs(['Home', 'About', 'Play with models']) 
 
 main()
-
-
-
