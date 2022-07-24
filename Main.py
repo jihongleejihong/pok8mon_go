@@ -260,7 +260,7 @@ def main():
 
             if user_img:
                 test_img = np.asarray(Image.open(user_img).convert('RGB').resize((300, 300)))
-                if not method == 'PC 카메라로 찍기':
+                if not method == '카메라로 찍기':
                     st.image(test_img)
             
 
