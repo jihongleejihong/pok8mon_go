@@ -194,7 +194,7 @@ def main():
         ['Type2', 'Test', 0.917],], columns = ['Target', 'Condition', 'Accuracy'])
         ct_acc = pd.crosstab(columns = df_acc["Target"], index = df_acc["Condition"], values = df_acc["Accuracy"], aggfunc= np.sum).sort_index(ascending = False)
 
-        st.markdown('* **포켓몬 종류 분류 (Name)**')
+        st.markdown('#### **포켓몬 종류 분류 (Name)**')
         st.image('resources/img/main_img/6.png', width = 800)
         st.markdown("`Accuracy`")
         st.dataframe(ct_acc["Name"])
@@ -202,7 +202,7 @@ def main():
 
 
         st.markdown(
-        '**포켓몬 속성 분류 (Type 1, Type2)**')
+        '#### **포켓몬 속성 분류 (Type 1, Type2)**')
         st.image('resources/img/main_img/7.png', width = 800)
         st.markdown("`Accuracy`")
         st.dataframe(ct_acc[["Type1", "Type2"]])
