@@ -1,4 +1,5 @@
 import streamlit as st
+import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -329,7 +330,8 @@ def main():
                         st.image(f'resources/img/type/{type2}.png')
                         st.subheader(type_dict[type2])
                         st.write('확률: ',format(pred_type2[0][t2]*100, '.2f'),"%")
-tab1, tab2, tab3 = st.tabs(['Home', 'Intro', 'Play with models']) 
+
+tab1, tab2, tab3 = st.tabs(['Home', 'About', 'Play with models']) 
 
 main()
 
