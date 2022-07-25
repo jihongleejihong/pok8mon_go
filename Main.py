@@ -73,7 +73,7 @@ def main():
         #### 참여자: 김현욱, 박이슬, 이명진, 이지홍''')
         st.markdown('---')
     
-        st.image('https://s3.us-west-2.amazonaws.com/secure.notion-static.com/c487f053-1989-4cdc-b31d-b344721a5e0d/POKEMON.jfif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220724%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220724T060204Z&X-Amz-Expires=86400&X-Amz-Signature=5e82e2d9d95896856b13579f9eef0d872d9e4947428d20671193c4bf4d339476&X-Amz-SignedHeaders=host&x-id=GetObject',
+        st.image('resources/img/main_img/0.jpeg',
         width = 700)
     with tab2:
         st.markdown('''
