@@ -54,7 +54,7 @@ def upper_type(type_label):
     return type_label[0].upper() + type_label[1:]
 
 
-@st.cache
+@st.cache(allow_output_mutation = True)
 def load_dict():
     with open('resources/poke_dict.json', 'r') as fp:
         poke_dict = json.load(fp)
