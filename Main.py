@@ -12,7 +12,7 @@ import multiprocessing
 import requests
 
 
-@st.experimental_singleton
+@st.experimental_singleton 
 def load_models(model_path):
     clf_model = tf.lite.Interpreter(f'{model_path}model_classification.tflite', num_threads = multiprocessing.cpu_count())
     clf_model.allocate_tensors()
