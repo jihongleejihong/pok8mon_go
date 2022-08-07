@@ -78,7 +78,7 @@ def main():
         width = 700)
     with tab2:
         main_md = Path('resources/main.md').read_text(encoding = 'utf-8')
-        st.markdown(main_md, unsafe_allow_html=True)
+        st.markdown(main_md, unsafe_allow_html=False)
         # st.markdown('''
         # ### 프로젝트 목적
         
