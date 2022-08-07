@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
@@ -10,6 +11,7 @@ import glob
 from PIL import Image
 import multiprocessing
 import requests
+from pathlib import Path
 
 
 @st.experimental_singleton 
@@ -75,136 +77,138 @@ def main():
         st.image('resources/img/main_img/0.jpeg',
         width = 700)
     with tab2:
-        st.markdown('''
-        ### 프로젝트 목적
+        main_md = Path('resources/main.md').read_text(encoding = 'utf-8')
+        st.markdown(main_md, unsafe_allow_html=True)
+        # st.markdown('''
+        # ### 프로젝트 목적
         
-        - 합성곱신경망(Convolutional Neural Network, CNN)을 이용한 이미지 처리에 대한 이해
-        - 인공지능 서비스 개발 과정에 대한 이해 및 수행
+        # - 합성곱신경망(Convolutional Neural Network, CNN)을 이용한 이미지 처리에 대한 이해
+        # - 인공지능 서비스 개발 과정에 대한 이해 및 수행
 
-        ''')
+        # ''')
         
-        st.image('resources/img/main_img/1.png', width = 800)
+        # st.image('resources/img/main_img/1.png', width = 800)
 
-        st.markdown('---')
+        # st.markdown('---')
 
-        st.markdown('''
-        ### 프로젝트 Workflows
-        ''')
+        # st.markdown('''
+        # ### 프로젝트 Workflows
+        # ''')
 
-        st.image('resources/img/main_img/2.png', width = 800)
+        # st.image('resources/img/main_img/2.png', width = 800)
 
-        st.markdown('''
-        - **데이터 수집 및 가공**
-            - Pokemon `Image dataset` (이하, 이미지 데이터)
-            - Pokemon `기본 정보 (Stats. 포함) dataset` (이하, Stats. 데이터)
+        # st.markdown('''
+        # - **데이터 수집 및 가공**
+        #     - Pokemon `Image dataset` (이하, 이미지 데이터)
+        #     - Pokemon `기본 정보 (Stats. 포함) dataset` (이하, Stats. 데이터)
             
-        - **모델 학습**
+        # - **모델 학습**
             
-            모델 1, 2는 각 문제에 적절한 pre-trained model을 기반으로 학습한 반면, 
+        #     모델 1, 2는 각 문제에 적절한 pre-trained model을 기반으로 학습한 반면, 
             
-            모델 3 학습에서는 전이 학습을 이용하지 않았음
+        #     모델 3 학습에서는 전이 학습을 이용하지 않았음
             
-            - 모델 1: 이미지 데이터 학습을 통한 Pokemon **종류 분류**
-            - 모델 2: 이미지 데이터 학습을 통한 Pokemon **속성(Type) 분류** (ex. 피카츄 → Electric)
-            - 모델 3: Stats. 데이터 학습을 통한 Pokemon **Stats. 예측**
+        #     - 모델 1: 이미지 데이터 학습을 통한 Pokemon **종류 분류**
+        #     - 모델 2: 이미지 데이터 학습을 통한 Pokemon **속성(Type) 분류** (ex. 피카츄 → Electric)
+        #     - 모델 3: Stats. 데이터 학습을 통한 Pokemon **Stats. 예측**
             
-        - **API 배포 (이 부분 최종 배포 후 수정 필요)**
-            - 데이터 EDA
-            - 모델(모델 1, 모델 2) 학습에 따른 Pokemon 종류 / 속성 Classification 결과
-            - 사용자 Input(이미지 파일)과 가장 유사한 Pokemon 종류 분류
-        ''')
+        # - **API 배포 (이 부분 최종 배포 후 수정 필요)**
+        #     - 데이터 EDA
+        #     - 모델(모델 1, 모델 2) 학습에 따른 Pokemon 종류 / 속성 Classification 결과
+        #     - 사용자 Input(이미지 파일)과 가장 유사한 Pokemon 종류 분류
+        # ''')
 
-        st.markdown('---')
+        # st.markdown('---')
 
-        st.markdown('''
+        # st.markdown('''
 
-        ### 프로젝트 요약
+        # ### 프로젝트 요약
             
-        - 본 프로젝트를 수행하며 포켓몬 149종에 관한 데이터를 활용하였음. 
+        # - 본 프로젝트를 수행하며 포켓몬 149종에 관한 데이터를 활용하였음. 
             
-        -  6825개 이미지와 800개 Stats. 데이터를 과제 별 목적에 맞게 가공하여 모델 학습에 이용함.
+        # -  6825개 이미지와 800개 Stats. 데이터를 과제 별 목적에 맞게 가공하여 모델 학습에 이용함.
 
-        ''')
+        # ''')
 
-        st.markdown('''
-        | 과제 | Dataset 원본 | Train set | Test set | source |
-        | --- | --- | --- | --- | --- |
-        | 1. 종류 분류 | (6784, 150, 150, 3) | (5427, 150, 150, 3) | (1357, 150, 150, 3) | [이미지] |
-        | 2. 속성 분류 | (6825, 150, 150, 3) | (5324, 150, 150, 3) | (1501, 150, 150, 3) | [능력치] |
-        | 3. Stats. 예측 | (800, 13) |  |  | [능력치] |
+        # st.markdown('''
+        # | 과제 | Dataset 원본 | Train set | Test set | source |
+        # | --- | --- | --- | --- | --- |
+        # | 1. 종류 분류 | (6784, 150, 150, 3) | (5427, 150, 150, 3) | (1357, 150, 150, 3) | [이미지] |
+        # | 2. 속성 분류 | (6825, 150, 150, 3) | (5324, 150, 150, 3) | (1501, 150, 150, 3) | [능력치] |
+        # | 3. Stats. 예측 | (800, 13) |  |  | [능력치] |
 
-        > 데이터 원본
-        > * Image dataset - [[Kaggle - 7000 hand-cropped and labeled Pokemon images for classification]](https://www.kaggle.com/datasets/lantian773030/pokemonclassification) 
-        > * Stats. dataset - [[Kaggle - 721 Pokemon with stats and types](https://www.kaggle.com/datasets/abcsds/pokemon)]
-        ''')
+        # > 데이터 원본
+        # > * Image dataset - [[Kaggle - 7000 hand-cropped and labeled Pokemon images for classification]](https://www.kaggle.com/datasets/lantian773030/pokemonclassification) 
+        # > * Stats. dataset - [[Kaggle - 721 Pokemon with stats and types](https://www.kaggle.com/datasets/abcsds/pokemon)]
+        # ''')
 
-        st.markdown('---')
+        # st.markdown('---')
 
-        st.markdown('''
-        ### 데이터 미리 보기
+        # st.markdown('''
+        # ### 데이터 미리 보기
 
-        - 이미지 데이터
+        # - 이미지 데이터
 
-        아래와 같이 각 포켓몬에 대해 다양한 각도, 배경, 효과가 적용된 여러 이미지를 학습에 적용함 
+        # 아래와 같이 각 포켓몬에 대해 다양한 각도, 배경, 효과가 적용된 여러 이미지를 학습에 적용함 
 
-        (포켓몬 149종 6825개 → 1마리 당 평균 46개 이미지 학습)
+        # (포켓몬 149종 6825개 → 1마리 당 평균 46개 이미지 학습)
 
-        ''')
+        # ''')
 
-        cols = st.columns(2)
-        with cols[0]:
-            st.image('resources/img/main_img/3.png', width = 400)
-        with cols[1]:
-            st.image('resources/img/main_img/4.png', width = 400)
+        # cols = st.columns(2)
+        # with cols[0]:
+        #     st.image('resources/img/main_img/3.png', width = 400)
+        # with cols[1]:
+        #     st.image('resources/img/main_img/4.png', width = 400)
 
-        st.markdown("- 스탯 데이터")
+        # st.markdown("- 스탯 데이터")
 
-        st.image('resources/img/main_img/5.png', width = 800)
+        # st.image('resources/img/main_img/5.png', width = 800)
 
-        cols = st.columns(2)
-        with cols[0]:
-            with st.expander('[데이터 컬럼 정보]'):
-                st.markdown('''
-            - `#, Name`: 포켓몬 별 고유 번호, 이름
-            - **`Type 1, Type 2`**: 포켓몬 별 고유 속성 ⇒ 특정 공격에 대해 취약 / 방어력이 높음을 의미
-
-
-
-            - `Total` : 모든 Stats. 정보(HP~Speed)의 합 ⇒ 해당 포켓몬이 얼마나 강한지를 의미
-                - **`HP`**: 포켓몬이 견딜 수 있는 데미지의 총합
-                - **`Attack`**: Scratch, Punch 등 일반 공격의 타격
-                - **`Defense`**: 일반 공격에 대한 데미지 저항
-                - **`Sp. Atk`**: Fire blast, Bubble beam 등 특정 포켓몬에 특화된 공격의 타격
-                - **`Sp. Def`**: Special attack에 대한 데미지 저항
-                - **`Speed`** : 포켓몬의 속도 ⇒ 선제 공격 여부 결정
-            - `Generation`: 포켓몬 세대 (세대가 진화할 수록, 일부 Type이 추가됨)
-            - `Legendary`: 전설의 희귀 포켓몬 여부 (bool)
-
-                ''')
-
-        st.markdown('---')    
-        st.markdown('### 프로젝트 결과')
-
-        df_acc = pd.DataFrame([['Name', 'Train', 0.992],
-        ['Name', 'Test', 0.893],
-        ['Type1', 'Train', 0.909],
-        ['Type1', 'Test', 0.879],
-        ['Type2', 'Train', 0.938],
-        ['Type2', 'Test', 0.917],], columns = ['Target', 'Condition', 'Accuracy'])
-        ct_acc = pd.crosstab(columns = df_acc["Target"], index = df_acc["Condition"], values = df_acc["Accuracy"], aggfunc= np.sum).sort_index(ascending = False)
-
-        st.markdown('#### **포켓몬 종류 분류 (Name)**')
-        st.image('resources/img/main_img/6.png', width = 800)
-        st.markdown("`Accuracy`")
-        st.dataframe(ct_acc["Name"])
+        # cols = st.columns(2)
+        # with cols[0]:
+        #     with st.expander('[데이터 컬럼 정보]'):
+        #         st.markdown('''
+        #     - `#, Name`: 포켓몬 별 고유 번호, 이름
+        #     - **`Type 1, Type 2`**: 포켓몬 별 고유 속성 ⇒ 특정 공격에 대해 취약 / 방어력이 높음을 의미
 
 
 
-        st.markdown(
-        '#### **포켓몬 속성 분류 (Type 1, Type2)**')
-        st.image('resources/img/main_img/7.png', width = 800)
-        st.markdown("`Accuracy`")
-        st.dataframe(ct_acc[["Type1", "Type2"]])
+        #     - `Total` : 모든 Stats. 정보(HP~Speed)의 합 ⇒ 해당 포켓몬이 얼마나 강한지를 의미
+        #         - **`HP`**: 포켓몬이 견딜 수 있는 데미지의 총합
+        #         - **`Attack`**: Scratch, Punch 등 일반 공격의 타격
+        #         - **`Defense`**: 일반 공격에 대한 데미지 저항
+        #         - **`Sp. Atk`**: Fire blast, Bubble beam 등 특정 포켓몬에 특화된 공격의 타격
+        #         - **`Sp. Def`**: Special attack에 대한 데미지 저항
+        #         - **`Speed`** : 포켓몬의 속도 ⇒ 선제 공격 여부 결정
+        #     - `Generation`: 포켓몬 세대 (세대가 진화할 수록, 일부 Type이 추가됨)
+        #     - `Legendary`: 전설의 희귀 포켓몬 여부 (bool)
+
+        #         ''')
+
+        # st.markdown('---')    
+        # st.markdown('### 프로젝트 결과')
+
+        # df_acc = pd.DataFrame([['Name', 'Train', 0.992],
+        # ['Name', 'Test', 0.893],
+        # ['Type1', 'Train', 0.909],
+        # ['Type1', 'Test', 0.879],
+        # ['Type2', 'Train', 0.938],
+        # ['Type2', 'Test', 0.917],], columns = ['Target', 'Condition', 'Accuracy'])
+        # ct_acc = pd.crosstab(columns = df_acc["Target"], index = df_acc["Condition"], values = df_acc["Accuracy"], aggfunc= np.sum).sort_index(ascending = False)
+
+        # st.markdown('#### **포켓몬 종류 분류 (Name)**')
+        # st.image('resources/img/main_img/6.png', width = 800)
+        # st.markdown("`Accuracy`")
+        # st.dataframe(ct_acc["Name"])
+
+
+
+        # st.markdown(
+        # '#### **포켓몬 속성 분류 (Type 1, Type2)**')
+        # st.image('resources/img/main_img/7.png', width = 800)
+        # st.markdown("`Accuracy`")
+        # st.dataframe(ct_acc[["Type1", "Type2"]])
     
     with tab3:
         model_path = 'resources/fitted_models/'
