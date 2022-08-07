@@ -4,12 +4,12 @@
 - 합성곱신경망(Convolutional Neural Network, CNN)을 이용한 이미지 처리에 대한 이해
 - 인공지능 서비스 개발 과정에 대한 이해 및 수행
 
-![project preview](img/main_img/1.png?raw=true)
+![project preview](https://raw.githubusercontent.com/jihongleejihong/pok8mon_go/main/resources/img/main_img/1.png?raw=true){: width = "50%"}
 
 ### 프로젝트 요약
 
 
-![project workflow](img/main_img/2.png?raw=true)
+![project workflow](https://raw.githubusercontent.com/jihongleejihong/pok8mon_go/main/resources/img/main_img/2.png?raw=true)
 
 
 - 본 프로젝트를 수행하며 포켓몬 149종에 관한 데이터를 활용하였음. 
@@ -21,9 +21,9 @@
 | --- | --- | --- | --- | --- |
 | 1. 종류 분류 | (6784, 150, 150, 3) | (5427, 150, 150, 3) | (1357, 150, 150, 3) | [이미지]  |
 | 2. 속성 분류 | (6825, 150, 150, 3) | (5324, 150, 150, 3) | (1501, 150, 150, 3) | [능력치] |
-| 3. Stats. 예측 | (800, 13) |  |  | [능력치] |
+| 3. Stats. 예측 | (800, 13) |  |  | [능력치] |  
 
-
+#
 
 | 과제 | 이미지 처리 기법 | 딥러닝 레이어 | Optimizer | Metrics | Loss function |
 | --- | --- | --- | --- | --- | --- |
@@ -55,10 +55,10 @@
 
     |||
     |--|-|
-    |![Untitled](img/main_img/3.png?raw=true)|![Untitled](img/main_img/4.png?raw=true)|
+    |![Untitled](https://raw.githubusercontent.com/jihongleejihong/pok8mon_go/main/resources/img/main_img/3.png?raw=true)|![Untitled](https://raw.githubusercontent.com/jihongleejihong/pok8mon_go/main/resources/img/main_img/4.png?raw=true)|
     |||
 
-   ![Untitled](img/main_img/5.png?raw=true)
+   ![Untitled](https://raw.githubusercontent.com/jihongleejihong/pok8mon_go/main/resources/img/main_img/5.png?raw=true)
     
     - [데이터 컬럼 정보]
         - **`#, Name`**: 포켓몬 별 고유 번호, 이름
@@ -81,7 +81,7 @@
 
 ### 3.1. 포켓몬 종류 분류 (Name)
 
-![(과제 1)에 대한 문제 상황 및 학습 결과 요약](img/main_img/6.png?raw=true)
+![(과제 1)에 대한 문제 상황 및 학습 결과 요약](https://raw.githubusercontent.com/jihongleejihong/pok8mon_go/main/resources/img/main_img/6.png?raw=true)
 
 (과제 1)에 대한 문제 상황 및 학습 결과 요약
 
@@ -95,7 +95,7 @@
 
 ### 3.2. 포켓몬 속성 분류 (Type 1, Type2)
 
-![Untitled](img/main_img/7.png?raw=true)
+![Untitled](https://raw.githubusercontent.com/jihongleejihong/pok8mon_go/main/resources/img/main_img/7.png?raw=true)
 
 
 **Accuracy**       (`Type 1`, `Type 2`) = (`0.909`, `0.938`)
